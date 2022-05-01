@@ -7,11 +7,39 @@
  * Computes the sum of three bits.
  */
 
-CHIP FullAdder {
-    IN a, b, c;  // 1-bit inputs
-    OUT sum,     // Right bit of a + b + c
-        carry;   // Left bit of a + b + c
+CHIP FullAdder{
+    IN a, b, c;
+    OUT sum, carry;
 
+    //implementation:
     PARTS:
-    // Put you code here:
+    //function for sum 
+    Not(in=a, out=nota);
+    Not(in=b, out=notb);
+    Not(in=c, out=notc);
+
+    And(a=nota, b=b, out=notaANDb);
+    And(a=notaANDb, b=notc, out=notaANDbANDnotc);
+    
+    And(a=a, b=notb, out=aANDnotb);
+    And(a=aANDnotb, b=notc, out=aANDnotbANDnotc);
+    
+    And(a=nota, b=notb, out=notaANDnotb);
+    And(a=notaANDnotb, b=c, out=notaANDnotbANDc);
+
+    And(a=a, b=b, out=aANDb);//we can use same gate for carry implementation
+    And(a=aANDb, b=c, out=aANDbANDc);
+   
+    Or(a=notaANDbANDnotc, b=aANDnotbANDnotc, out=notaANDbANDnotcORaANDnotbANDnotc);
+    Or(a=notaANDbANDnotcORaANDnotbANDnotc, b=notaANDnotbANDc, out=notaANDbANDnotcORaANDnotbANDnotcORnotaANDnotbANDc);
+    Or(a=notaANDbANDnotcORaANDnotbANDnotcORnotaANDnotbANDc, b=aANDbANDc, out=out);
+    
+    //function for carry 
+    And(a=b, b=c, out=bANDc);
+    And(a=a, b=b, out=aANDb2);
+    And(a=a, b=c, out=aANDc);
+
+    Or(a=bANDc, b=aANDb2, out=bANDcANDaANDb);
+    Or(a=bANDcANDaANDb, b=aANDc, out=carry);
+
 }
